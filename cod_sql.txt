@@ -1,0 +1,368 @@
+create table Jucator
+(idJucator number(2) primary key,
+ idContract number(2) not null,
+ idImpresar number(2),
+ nume varchar(20) not null,
+ prenume varchar(20) not null,
+ varsta number(2) not null,
+ nationalitate varchar(20) not null,
+ inaltime number(4,1) not null,
+ telefon varchar(10) not null
+  CONSTRAINT check_telefon_1 check (length(telefon)=10),
+  
+ constraint fk_impresar foreign key (idImpresar)
+                        references Impresar(idImpresar) on delete set null,
+ constraint fk_contract foreign key(idContract)
+                            references Contract(idContract) on delete set null
+);
+
+ 
+ create table Contract(
+ idContract number(2) primary key,
+  durata varchar(20) not null,
+  salariu number(10) not null,
+  rol varchar(20) not null
+   CONSTRAINT check_rol check (rol in ('Foarte important', 'Important', 'Rezerva', 'De viitor'))
+ );
+ 
+ 
+create table Impresar(
+  idImpresar number(2) primary key,
+  nume varchar(20) not null,
+  prenume varchar(20) not null,
+  telefon varchar(10) not null
+   CONSTRAINT check_telefon_2 check (length(telefon)=10)
+);
+
+create table Stadion(
+idStadion number(2) primary key,
+nume varchar(20)not null,
+locatie varchar(20) not null,
+tip_iarba varchar(10)
+ CONSTRAINT check_tip_iarba_1 check (tip_iarba in ('Naturala', 'Sintetica'))
+);
+
+create table Meci(
+idMeci number(2) primary key,
+idStadion number(2) not null,
+adversar varchar(20) not null,
+data_meci date not null,
+ora varchar(20),
+constraint fk_stadion_meci foreign key(idStadion)
+                            references Stadion(idStadion) on delete set null
+);
+
+
+create table Performanta_jucator(
+idJucator number(2) not null,
+idMeci number(2) not null,
+minute_ number(2),
+goluri number(2),
+pase_decisive number(1) ,
+cartonas_galben number(1) ,
+cartonas_rosu number(1),
+nota number(2,1) not null,
+pozitie_jucator varchar(20) not null,
+numar_tricou number(2) not null,
+constraint pk_performanta primary key(idMeci, idJucator),
+constraint fk_meci_perf foreign key (idMeci)
+                        references Meci(idMeci) on delete cascade,
+constraint fk_jucator_perf foreign key (idJucator)
+                        references Jucator(idJucator) on delete cascade              
+);
+
+
+create table Arbitru(
+ idArbitru number(2) primary key,
+ nume varchar(20) not null,
+ prenume varchar(20) not null,
+ varsta number(2) not null,
+ nationalitate varchar(20),
+ rol varchar(20)
+  CONSTRAINT check_rol_2 check (rol in ('Central', 'Tusier', 'Rezerva'))
+);
+
+
+
+
+create table Performanta_arbitru(
+idMeci number(2) not null,
+idArbitru number(2) not null,
+nota number(2,1) not null,
+constraint pk_performanta_arbitru primary key(idMeci, idArbitru),
+constraint fk_meci_arbitr foreign key (idMeci)
+                        references Meci(idMeci) on delete cascade,
+constraint fk_arbitr_arbitr foreign key (idArbitru)
+                        references Arbitru(idArbitru) on delete cascade
+);
+
+create table Baza_antrenament(
+idBaza number(2) primary key,
+locatie varchar(20) not null,
+tip_iarba varchar(10)
+ CONSTRAINT check_tip_iarba_2 check (tip_iarba in ('Naturala', 'Sintetica'))
+);
+
+create table Tip_antrenament(
+idAntrenament number(2) primary key,
+idBaza number(2) not null,
+durata varchar(20),
+intensitate varchar(20) not null
+ CONSTRAINT check_intensitate check (intensitate in ('Mica', 'Mijlocie', 'Mare')),
+tip varchar(20)
+ CONSTRAINT check_tip_1 check (tip in ('Portar', 'Fundas', 'Mijlocas', 'Atacant')),
+ 
+constraint fk_baza_tipantr foreign key (idBaza)
+                    references Baza_antrenament(idBaza) on delete set null
+);
+ 
+create table Performanta_antrenament(
+ idAntrenament number(2) not null,
+ idJucator number(2) not null,
+ randament varchar(20) not null,
+  CONSTRAINT check_randamment check (randament in ('Satisfacator','Nesatisfacator')),
+ constraint pk_performanta_antrenament primary key(idAntrenament, idJucator),
+ constraint fk_antr_grup foreign key (idAntrenament)
+                        references Tip_antrenament(idAntrenament) on delete cascade,
+ constraint fk_jucator_grup foreign key (idJucator)
+                        references Jucator(idJucator) on delete cascade
+ 
+);
+
+insert into Baza_antrenament
+(idBaza ,locatie ,tip_iarba)
+values
+(1,'Bucuresti','Naturala');
+insert into Baza_antrenament
+(idBaza ,locatie ,tip_iarba)
+values
+(2,'Bucuresti','Sintetica');
+insert into Baza_antrenament
+(idBaza ,locatie ,tip_iarba)
+values
+(3,'Bacau','Naturala');
+insert into Baza_antrenament
+(idBaza ,locatie ,tip_iarba)
+values
+(4,'Buzau','Sintetica');
+insert into Baza_antrenament
+(idBaza ,locatie ,tip_iarba)
+values
+(5,'Ploiesti','Naturala');
+
+insert into Stadion
+(idStadion,nume ,locatie ,tip_iarba)
+values
+(1,'Arena Nationala','Bucuresti','Naturala');
+insert into Stadion
+(idStadion,nume ,locatie ,tip_iarba)
+values
+(2,'Ion Oblemenco','Craiova','Naturala');
+insert into Stadion
+(idStadion,nume ,locatie ,tip_iarba)
+values
+(3,'Constantin Adita','Tg-Jiu','Naturala');
+insert into Stadion
+(idStadion,nume ,locatie ,tip_iarba)
+values
+(4,'Cluj-Arena','Cluj','Naturala');
+insert into Stadion
+(idStadion,nume ,locatie ,tip_iarba)
+values
+(5,'Giulesti','Bucuresti','Naturala');
+
+insert into Arbitru
+(idArbitru , nume ,prenume ,varsta ,nationalitate, rol )
+values
+(1,'Popescu','Ion',33,'Romania','Central');
+insert into Arbitru
+(idArbitru , nume ,prenume ,varsta ,nationalitate, rol )
+values
+(2,'Marciu','Marius',30,'Romania','Rezerva');
+insert into Arbitru
+(idArbitru , nume ,prenume ,varsta ,nationalitate, rol )
+values
+(3,'Franco','Alvarez',44,'Spania','Tusier');
+insert into Arbitru
+(idArbitru , nume ,prenume ,varsta ,nationalitate, rol )
+values
+(4,'Felix','Brych',38,'Germania','Central');
+insert into Arbitru
+(idArbitru , nume ,prenume ,varsta ,nationalitate, rol )
+values
+(5,'Daniel','Siebert',39,'Germania','Rezerva');
+
+insert into Contract
+(idContract ,durata, salariu,rol)
+values 
+(1,'3_ani',2000,'Rezerva');
+insert into Contract
+(idContract ,durata, salariu,rol)
+values 
+(2,'2_ani_si_6 luni',45000,'Foarte important');
+insert into Contract
+(idContract ,durata, salariu,rol)
+values 
+(3,'6_luni',34500,'Foarte important');
+insert into Contract
+(idContract ,durata, salariu,rol)
+values 
+(4,'1_an',2480,'Important');
+insert into Contract
+(idContract ,durata, salariu,rol)
+values 
+(5,'3_ani',44000,'Important');
+
+insert into Impresar
+( idImpresar,nume,prenume,telefon)
+values
+(1,'Ciocan','Madalin','0764123456');
+insert into Impresar
+( idImpresar,nume,prenume,telefon)
+values
+(2,'Matea','Razvan','0752326532');
+insert into Impresar
+( idImpresar,nume,prenume,telefon)
+values
+(3,'Dumitru','Matei','0725987890');
+insert into Impresar
+( idImpresar,nume,prenume,telefon)
+values
+(4,'Mino','Raiola','0678235670');
+insert into Impresar
+( idImpresar,nume,prenume,telefon)
+values
+(5,'Pini','Zahavi','0456246789');
+
+insert into Meci
+(idMeci ,idStadion ,adversar ,data_meci ,ora) 
+values
+(1,1,'FC_BRASOV','16-JAN-2023','19:30');
+
+insert into Meci
+(idMeci ,idStadion ,adversar ,data_meci ,ora) 
+values
+(2,2,'DINAMO_BUCURESTI','04-SEP-2023','21:00');
+
+insert into Meci
+(idMeci ,idStadion ,adversar ,data_meci ,ora)
+values
+(3,3,'FCSB','27-OCT-2023','20:30');
+
+insert into Meci
+(idMeci ,idStadion ,adversar ,data_meci ,ora)
+values
+(4,4,'CFR_CLUJ','11-NOV-2023','21:00');
+
+insert into Meci
+(idMeci ,idStadion ,adversar ,data_meci ,ora) 
+values
+(5,5,'FC_VOLUNTARI','02-DEC-2023','21:15');
+
+insert into Jucator
+(idJucator,idContract,idImpresar,nume,prenume,varsta,nationalitate,inaltime,telefon )
+values
+(1,1,1,'Florin','Stefan',26,'Romania',178.0,'0678235272');
+ insert into Jucator
+ (idJucator,idContract,idImpresar,nume,prenume,varsta,nationalitate,inaltime,telefon )
+values
+(2,2,2,'Marko','Dugandzic',28,'Croatia',185.5,'0752145689');
+insert into Jucator
+ (idJucator,idContract,idImpresar,nume,prenume,varsta,nationalitate,inaltime,telefon )
+values
+(3,3,3,'Cristian','Sapunaru',38,'Romania',182.5,'0752112568');
+insert into Jucator
+ (idJucator,idContract,idImpresar,nume,prenume,varsta,nationalitate,inaltime,telefon )
+values
+(4,4,4,'Moldovan','Horatiu',24,'Romania',191.5,'0254146689');
+insert into Jucator
+ (idJucator,idContract,idImpresar,nume,prenume,varsta,nationalitate,inaltime,telefon )
+values
+(5,5,5,'Stan','Alexandru',18,'Romania',172.1,'0552149619');
+
+
+
+insert into Tip_antrenament
+(idAntrenament,idBaza ,durata ,intensitate, tip)
+values
+(1,1,'120_minute','Mijlocie','Fundas');
+
+insert into Tip_antrenament
+(idAntrenament,idBaza ,durata ,intensitate, tip)
+values
+(2,2,'100_minute','Mare','Atacant');
+insert into Tip_antrenament
+(idAntrenament,idBaza ,durata ,intensitate, tip)
+values
+(3,3,'70_minute','Mica','Fundas');
+insert into Tip_antrenament
+(idAntrenament,idBaza ,durata ,intensitate, tip)
+values
+(4,4,'80_minute','Mijlocie','Portar');
+insert into Tip_antrenament
+(idAntrenament,idBaza ,durata ,intensitate, tip)
+values
+(5,5,'90_minute','Mijlocie','Atacant');
+
+insert into Performanta_arbitru
+(idMeci ,idArbitru ,nota )
+values
+(1,1,9.8);
+ insert into Performanta_arbitru
+(idMeci ,idArbitru ,nota )
+values
+(2,2,8.5);
+insert into Performanta_arbitru
+(idMeci ,idArbitru ,nota )
+values
+(3,3,6.8);
+insert into Performanta_arbitru
+(idMeci ,idArbitru ,nota )
+values
+(4,4,8.2);
+insert into Performanta_arbitru
+(idMeci ,idArbitru ,nota )
+values
+(5,5,7.5);
+
+insert into Performanta_antrenament
+(idAntrenament,idJucator,randament)
+values
+(1,1,'Satisfacator');
+insert into Performanta_antrenament
+(idAntrenament,idJucator,randament)
+values
+(2,2,'Satisfacator');
+insert into Performanta_antrenament
+(idAntrenament,idJucator,randament)
+values
+(3,3,'Nesatisfacator');
+insert into Performanta_antrenament
+(idAntrenament,idJucator,randament)
+values
+(4,4,'Satisfacator');
+insert into Performanta_antrenament
+(idAntrenament,idJucator,randament)
+values
+(5,5,'Satisfacator');
+
+insert into Performanta_jucator
+(idJucator ,idMeci ,minute_ ,goluri ,pase_decisive ,cartonas_galben ,cartonas_rosu ,nota ,pozitie_jucator,numar_tricou)
+values
+(1,1,90,0,0,1,0,7.2,'Fundas',23);
+insert into Performanta_jucator
+(idJucator ,idMeci ,minute_ ,goluri ,pase_decisive ,cartonas_galben ,cartonas_rosu ,nota ,pozitie_jucator,numar_tricou)
+values
+(2,2,90,1,0,1,0,9.0,'Atacant',9);
+insert into Performanta_jucator
+(idJucator ,idMeci ,minute_ ,goluri ,pase_decisive ,cartonas_galben ,cartonas_rosu ,nota ,pozitie_jucator,numar_tricou)
+values
+(3,3,90,0,1,1,0,8.4,'Fundas',4);
+insert into Performanta_jucator
+(idJucator ,idMeci ,minute_ ,goluri ,pase_decisive ,cartonas_galben ,cartonas_rosu ,nota ,pozitie_jucator,numar_tricou)
+values
+(4,4,90,0,0,0,0,8.8,'Portar',1);
+insert into Performanta_jucator
+(idJucator ,idMeci ,minute_ ,goluri ,pase_decisive ,cartonas_galben ,cartonas_rosu ,nota ,pozitie_jucator,numar_tricou)
+values
+(5,5,20,1,0,0,0,9.2,'Atacant',98);
