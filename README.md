@@ -1,2 +1,2 @@
-# Proiect-Baze-de-date
-Managerierea unu club profesionist de fotbal
+# Database project
+Database for a professional football club
